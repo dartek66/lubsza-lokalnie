@@ -1,0 +1,6 @@
+{
+  "name": "Portal Mieszkańców Gminy Lubsza",
+  "description": "Niezależny portal informacyjny, straż obywatelska i forum mieszkańców Gminy Lubsza. Kontrola działań urzędu, ankiety, monitoring inwestycji i wieści z 21 sołectw.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
