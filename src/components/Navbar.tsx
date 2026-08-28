@@ -9,16 +9,14 @@ import {
   Menu, 
   X, 
   Search, 
-  AlertCircle, 
   Sun, 
   Moon, 
   Eye, 
   Sparkles,
-  PhoneCall,
-  MapPin,
   Trees,
   Heart,
-  Trash2
+  Trash2,
+  BellRing
 } from 'lucide-react';
 import { HerbLubsza } from '../data/crest';
 
@@ -88,109 +86,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       isHighContrast 
         ? 'bg-black text-yellow-300 border-b-2 border-yellow-400' 
         : isDarkMode 
-          ? 'bg-slate-900/95 text-slate-100 border-b border-slate-800/80 backdrop-blur-md' 
-          : 'bg-white/95 text-slate-800 border-b border-slate-200/80 backdrop-blur-md shadow-xs'
+          ? 'bg-slate-900/95 text-slate-100 border-b border-slate-800/80 backdrop-blur-md shadow-md' 
+          : 'bg-white/95 text-slate-800 border-b border-slate-200/80 backdrop-blur-md shadow-sm'
     }`}>
-      {/* Top utility bar - WCAG Accessibility & Official details */}
-      <div className={`text-xs py-1.5 px-4 sm:px-6 lg:px-8 border-b ${
-        isHighContrast 
-          ? 'bg-black border-yellow-400 text-yellow-300' 
-          : isDarkMode 
-            ? 'bg-slate-950/90 border-slate-800 text-slate-400' 
-            : 'bg-slate-100/90 border-slate-200 text-slate-600'
-      }`}>
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
-              <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              Niezależny Portal Mieszkańców Gminy Lubsza
-            </span>
-            <span className="hidden md:inline-block text-slate-300 dark:text-slate-700">•</span>
-            <span className="hidden md:inline-flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 font-semibold">
-              Inicjatywa Obywatelska (Nieoficjalny)
-            </span>
-            <span className="hidden lg:inline-block text-slate-500 dark:text-slate-400 text-[11px]">
-              Głos 21 sołectw • Patrzymy władzy na ręce
-            </span>
-          </div>
-
-          {/* Accessibility tools */}
-          <div className="flex items-center gap-2">
-            {/* Font size toggle */}
-            <button
-              onClick={cycleFontSize}
-              id="btn-accessibility-fontsize"
-              title="Zmień rozmiar czcionki (A / A+ / A++)"
-              aria-label="Zmień rozmiar czcionki"
-              className={`px-2 py-0.5 rounded-md text-xs font-bold border transition-colors cursor-pointer ${
-                isHighContrast 
-                  ? 'border-yellow-400 hover:bg-yellow-400 hover:text-black' 
-                  : isDarkMode
-                    ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
-                    : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100 shadow-2xs'
-              }`}
-            >
-              A{fontSize === 'large' ? '+' : fontSize === 'xlarge' ? '++' : ''}
-            </button>
-
-            {/* High contrast mode */}
-            <button
-              onClick={() => setIsHighContrast(prev => !prev)}
-              id="btn-accessibility-contrast"
-              title="Wysoki kontrast (WCAG)"
-              aria-label="Włącz lub wyłącz wysoki kontrast"
-              className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold border transition-colors cursor-pointer ${
-                isHighContrast
-                  ? 'bg-yellow-400 text-black border-yellow-300'
-                  : isDarkMode
-                    ? 'border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              <Eye className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Kontrast</span>
-            </button>
-
-            {/* Dark mode toggle */}
-            {!isHighContrast && (
-              <button
-                onClick={() => setIsDarkMode(prev => !prev)}
-                id="btn-theme-toggle"
-                title={isDarkMode ? 'Tryb jasny' : 'Tryb ciemny'}
-                aria-label="Przełącz motyw dzień / noc"
-                className={`p-1 rounded-md border transition-colors cursor-pointer ${
-                  isDarkMode
-                    ? 'border-slate-700 bg-slate-800 text-amber-300 hover:bg-slate-700'
-                    : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-              </button>
-            )}
-
-            {/* Search trigger */}
-            <button
-              onClick={onOpenSearch}
-              id="btn-header-search"
-              aria-label="Szukaj w portalu"
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
-                isHighContrast
-                  ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black'
-                  : isDarkMode
-                    ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
-                    : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100 shadow-2xs'
-              }`}
-            >
-              <Search className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              <span>Szukaj w portalu</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main navigation header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-3">
+      {/* 1. Main Brand Header Bar with Integrated Tools & Actions */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-4">
+          
           {/* Brand Logo & Name */}
           <button
             onClick={() => handleNavClick('home')}
@@ -198,12 +100,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-xl p-1 shrink-0"
           >
             <div className="transition-transform duration-300 group-hover:scale-105 shrink-0">
-              <HerbLubsza className="w-12 h-12 md:w-14 md:h-14" />
+              <HerbLubsza className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl border border-amber-500/40 shadow-sm" withBorder={false} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold tracking-tight text-xl md:text-2xl font-serif text-slate-900 dark:text-slate-100">
-                  GŁOS LUBSZY
+                <span className="font-extrabold tracking-tight text-xl sm:text-2xl font-serif text-slate-900 dark:text-slate-100">
+                  GŁOS Lubszy
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
                   Obywatelski
@@ -215,8 +117,119 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </button>
 
-          {/* Desktop Permanent Horizontal Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 flex-wrap justify-end" aria-label="Główne menu">
+          {/* Right Header Controls: Accessibility tools, Search & Alerts in one line */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            
+            {/* Font size toggle */}
+            <button
+              onClick={cycleFontSize}
+              id="btn-accessibility-fontsize"
+              title="Zmień rozmiar czcionki (A / A+ / A++)"
+              aria-label="Zmień rozmiar czcionki"
+              className={`hidden sm:inline-flex items-center justify-center px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+                isHighContrast 
+                  ? 'border-yellow-400 hover:bg-yellow-400 hover:text-black' 
+                  : isDarkMode
+                    ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                    : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-2xs'
+              }`}
+            >
+              A{fontSize === 'large' ? '+' : fontSize === 'xlarge' ? '++' : ''}
+            </button>
+
+            {/* High contrast mode */}
+            <button
+              onClick={() => setIsHighContrast(prev => !prev)}
+              id="btn-accessibility-contrast"
+              title="Wysoki kontrast (WCAG)"
+              aria-label="Włącz lub wyłącz wysoki kontrast"
+              className={`hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
+                isHighContrast
+                  ? 'bg-yellow-400 text-black border-yellow-300'
+                  : isDarkMode
+                    ? 'border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>Kontrast</span>
+            </button>
+
+            {/* Dark mode toggle */}
+            {!isHighContrast && (
+              <button
+                onClick={() => setIsDarkMode(prev => !prev)}
+                id="btn-theme-toggle"
+                title={isDarkMode ? 'Tryb jasny' : 'Tryb ciemny'}
+                aria-label="Przełącz motyw dzień / noc"
+                className={`hidden sm:inline-flex items-center justify-center p-2 rounded-xl border transition-colors cursor-pointer ${
+                  isDarkMode
+                    ? 'border-slate-700 bg-slate-800 text-amber-300 hover:bg-slate-700'
+                    : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-2xs'
+                }`}
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            )}
+
+            {/* Search trigger button */}
+            <button
+              onClick={onOpenSearch}
+              id="btn-header-search"
+              aria-label="Szukaj w portalu"
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                isHighContrast
+                  ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black'
+                  : isDarkMode
+                    ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                    : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-2xs'
+              }`}
+            >
+              <Search className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              <span className="hidden sm:inline">Szukaj w portalu</span>
+            </button>
+
+            {/* Civic alerts button */}
+            <button
+              onClick={handleAlertClick}
+              id="btn-navbar-alerts"
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                isHighContrast
+                  ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black'
+                  : isDarkMode
+                    ? 'border-amber-700/60 bg-amber-950/40 text-amber-300 hover:bg-amber-900/50'
+                    : 'border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 shadow-2xs'
+              }`}
+            >
+              <BellRing className="w-3.5 h-3.5 text-amber-500" />
+              <span className="font-bold">Komunikaty ({unreadAlertCount})</span>
+            </button>
+
+            {/* Mobile hamburger menu toggle */}
+            <div className="flex lg:hidden items-center gap-1.5 ml-1">
+              <button
+                onClick={() => setMobileMenuOpen(prev => !prev)}
+                id="btn-mobile-menu-toggle"
+                aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu nawigacji'}
+                className="p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Lowered Desktop Navigation Menu Bar */}
+      <div className={`hidden lg:block border-t ${
+        isHighContrast
+          ? 'border-yellow-400 bg-black'
+          : isDarkMode
+            ? 'border-slate-800 bg-slate-900/90'
+            : 'border-slate-200/80 bg-slate-50/80'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex items-center gap-1 xl:gap-1.5 py-1.5 overflow-x-auto no-scrollbar justify-start xl:justify-between" aria-label="Główne menu">
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -225,58 +238,63 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={item.id}
                   id={`nav-link-${item.id}`}
                   onClick={() => handleNavClick(item.id)}
-                  className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-2 rounded-xl text-xs xl:text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs xl:text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap shrink-0 ${
                     isActive
                       ? isHighContrast
                         ? 'bg-yellow-400 text-black font-bold'
                         : isDarkMode
-                          ? 'bg-blue-900/70 text-blue-200 border border-blue-700 shadow-xs'
-                          : 'bg-blue-50 text-blue-900 border border-blue-200 shadow-xs'
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'bg-blue-600 text-white shadow-sm'
                       : isHighContrast
                         ? 'text-yellow-300 hover:bg-yellow-950'
                         : isDarkMode
                           ? 'text-slate-300 hover:text-white hover:bg-slate-800'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/80'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
-
-          {/* Mobile hamburger menu toggle */}
-          <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={onOpenSearch}
-              id="btn-mobile-quick-search"
-              aria-label="Szukaj w portalu"
-              className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 cursor-pointer"
-            >
-              <Search className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(prev => !prev)}
-              id="btn-mobile-menu-toggle"
-              aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu nawigacji'}
-              className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
         </div>
       </div>
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className={`lg:hidden border-t px-4 py-4 space-y-2 animate-in slide-in-from-top-2 duration-200 ${
+        <div className={`lg:hidden border-t px-4 py-4 space-y-3 animate-in slide-in-from-top-2 duration-200 ${
           isHighContrast
             ? 'bg-black border-yellow-400 text-yellow-300'
             : isDarkMode
               ? 'bg-slate-900 border-slate-800 text-slate-200'
               : 'bg-white border-slate-200 text-slate-800'
         }`}>
+          {/* Mobile Accessibility Controls */}
+          <div className="flex items-center gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <button
+              onClick={cycleFontSize}
+              className="flex-1 py-1.5 px-2 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center"
+            >
+              Rozmiar: A{fontSize === 'large' ? '+' : fontSize === 'xlarge' ? '++' : ''}
+            </button>
+            <button
+              onClick={() => setIsHighContrast(prev => !prev)}
+              className="flex-1 py-1.5 px-2 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center gap-1"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              Kontrast
+            </button>
+            {!isHighContrast && (
+              <button
+                onClick={() => setIsDarkMode(prev => !prev)}
+                className="py-1.5 px-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center"
+              >
+                {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-300" /> : <Moon className="w-3.5 h-3.5" />}
+              </button>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pb-2">
             {navItems.map(item => {
               const Icon = item.icon;

@@ -177,13 +177,16 @@ export const HeaderBanner: React.FC<HeaderBannerProps> = ({
             
             {/* Left: Coat of Arms + Welcome Typography */}
             <div className="lg:col-span-8 space-y-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                {/* Official Crest Image */}
-                <div className="shrink-0 p-1 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl group transition-all duration-300 hover:border-amber-400/50">
-                  <HerbLubsza className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32" />
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+                {/* Official Crest Image - Enlarged & Prominent with symmetrical border */}
+                <div className="shrink-0 transition-transform duration-300 hover:scale-[1.02]">
+                  <HerbLubsza 
+                    className="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 lg:w-56 lg:h-56 rounded-3xl border-2 border-amber-500/40 shadow-2xl hover:border-amber-400/80" 
+                    withBorder={false}
+                  />
                 </div>
 
-                <div>
+                <div className="text-center sm:text-left">
                   <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold uppercase tracking-wider mb-2.5">
                     <Sparkles className="w-3.5 h-3.5" />
                     Niezależny Głos Mieszkańców 21 Sołectw
@@ -191,7 +194,7 @@ export const HeaderBanner: React.FC<HeaderBannerProps> = ({
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white font-serif tracking-tight leading-tight">
                     Głos Mieszkańców Gminy Lubsza
                   </h1>
-                  <p className="text-slate-300 text-sm sm:text-base max-w-2xl font-light mt-2 leading-relaxed">
+                  <p className="text-slate-300 text-sm sm:text-base max-w-2xl font-light mt-3 leading-relaxed">
                     Obywatelski portal informacyjny, publicystyka i forum. Informujemy o sprawach lokalnych, promujemy aktywność sołectw oraz patrzymy władzy i urzędnikom na ręce.
                   </p>
                 </div>

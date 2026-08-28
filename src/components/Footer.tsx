@@ -81,11 +81,11 @@ jobs:
           {/* Col 1: Brand & Crest & Citizen Initiative Identity (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <HerbLubsza className="w-14 h-14" />
+              <HerbLubsza className="w-12 h-12 rounded-xl border border-amber-500/40 shadow-md shrink-0" withBorder={false} />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-serif font-black text-xl text-white tracking-wide">
-                    GŁOS LUBSZY
+                    GŁOS Lubszy
                   </span>
                   <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-amber-500 text-slate-950">
                     Obywatelski
