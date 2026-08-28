@@ -15,12 +15,14 @@ import {
   Sparkles
 } from 'lucide-react';
 import { VILLAGES } from '../data/mockData';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface ArticleModalProps {
   article: Article | null;
   onClose: () => void;
   onLike: (articleId: string) => void;
   onAddComment: (articleId: string, comment: Omit<CommentItem, 'id' | 'createdAt' | 'likes'>) => void;
+  isHighContrast?: boolean;
 }
 
 export const ArticleModal: React.FC<ArticleModalProps> = ({
@@ -28,6 +30,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
   onClose,
   onLike,
   onAddComment,
+  isHighContrast = false,
 }) => {
   const [newCommentName, setNewCommentName] = useState('');
   const [newCommentVillage, setNewCommentVillage] = useState('Lubsza');
@@ -145,8 +148,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
           </div>
 
           {/* Full content body */}
-          <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed space-y-4 whitespace-pre-line text-sm sm:text-base">
-            {article.content}
+          <div className="pt-2">
+            <MarkdownRenderer content={article.content} />
           </div>
 
           {/* Tags */}

@@ -38,6 +38,7 @@ import { CommunityForum } from './components/CommunityForum';
 import { WasteScheduleWidget } from './components/WasteScheduleWidget';
 import { ResidentAlertModal } from './components/ResidentAlertModal';
 import { SearchModal } from './components/SearchModal';
+import { AdminCMSModal } from './components/AdminCMSModal';
 import { ForestSection } from './components/ForestSection';
 import { AnimalsSection } from './components/AnimalsSection';
 import { Footer } from './components/Footer';
@@ -71,11 +72,39 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [isWasteModalOpen, setIsWasteModalOpen] = useState(false);
+  const [isCMSOpen, setIsCMSOpen] = useState(false);
 
   // Dynamic Data States with persistence
   const [articles, setArticles] = useState<Article[]>(() => {
-    const saved = localStorage.getItem('gmina_lubsza_articles');
-    return saved ? JSON.parse(saved) : ARTICLES;
+    try {
+      const saved = localStorage.getItem('gmina_lubsza_articles');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((a: any, idx: number) => ({
+            id: a.id || `art-${idx}`,
+            title: a.title || 'Artykuł',
+            slug: a.slug || `artykul-${idx}`,
+            excerpt: a.excerpt || '',
+            content: a.content || '',
+            coverImage: a.coverImage || 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+            author: a.author || 'Redakcja Głos Lubszy',
+            authorRole: a.authorRole || 'Obywatelska Redakcja',
+            publishDate: a.publishDate || '2026-08-28',
+            readTimeMinutes: Number(a.readTimeMinutes) || 3,
+            category: a.category || 'aktualnosci',
+            views: Number(a.views) || 0,
+            likes: Number(a.likes) || 0,
+            comments: Array.isArray(a.comments) ? a.comments : [],
+            tags: Array.isArray(a.tags) ? a.tags : ['Lubsza'],
+            isFeatured: !!a.isFeatured,
+          }));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse articles from localStorage', e);
+    }
+    return ARTICLES;
   });
 
   const [announcements, setAnnouncements] = useState<OfficialAnnouncement[]>(OFFICIAL_ANNOUNCEMENTS);
@@ -385,6 +414,7 @@ export default function App() {
         setFontSize={setFontSize}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenAlert={() => setIsAlertModalOpen(true)}
+        onOpenCMS={() => setIsCMSOpen(true)}
       />
 
       {/* Main Content Area based on activeTab */}
@@ -404,6 +434,7 @@ export default function App() {
               articles={articles}
               onSelectArticle={(art) => setSelectedArticle(art)}
               onLikeArticle={handleLikeArticle}
+              onOpenCMS={() => setIsCMSOpen(true)}
               isHighContrast={isHighContrast}
             />
 
@@ -447,6 +478,7 @@ export default function App() {
               articles={articles}
               onSelectArticle={(art) => setSelectedArticle(art)}
               onLikeArticle={handleLikeArticle}
+              onOpenCMS={() => setIsCMSOpen(true)}
               isHighContrast={isHighContrast}
             />
           </div>
@@ -584,9 +616,22 @@ export default function App() {
         />
       )}
 
+      {/* MODAL: Visual CMS Editor (Keystatic & Cloudflare D1 SQL) */}
+      <AdminCMSModal
+        isOpen={isCMSOpen}
+        onClose={() => setIsCMSOpen(false)}
+        articles={articles}
+        onSaveArticles={(newArticles) => setArticles(newArticles)}
+        onSelectArticlePreview={(art) => {
+          setIsCMSOpen(false);
+          setSelectedArticle(art);
+        }}
+      />
+
       {/* Footer with Municipality Info & Cloudflare/GitHub Deployment Details */}
       <Footer
         onNavigate={handleNavigate}
+        onOpenCMS={() => setIsCMSOpen(true)}
         isHighContrast={isHighContrast}
       />
 

@@ -27,6 +27,7 @@ export interface Article {
   comments: CommentItem[];
   tags: string[];
   isFeatured?: boolean;
+  isLiked?: boolean;
 }
 
 export interface OfficialAnnouncement {

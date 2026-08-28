@@ -17,9 +17,13 @@ import {
 
 interface OfficialAnnouncementsProps {
   announcements: OfficialAnnouncement[];
+  isHighContrast?: boolean;
 }
 
-export const OfficialAnnouncements: React.FC<OfficialAnnouncementsProps> = ({ announcements }) => {
+export const OfficialAnnouncements: React.FC<OfficialAnnouncementsProps> = ({ 
+  announcements,
+  isHighContrast = false
+}) => {
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<OfficialAnnouncement | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('wszystkie');
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);

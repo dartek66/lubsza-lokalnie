@@ -26,6 +26,7 @@ interface NavbarProps {
   onOpenAlertModal?: () => void;
   onOpenAlert?: () => void;
   onOpenSearch: () => void;
+  onOpenCMS?: () => void;
   isHighContrast: boolean;
   setIsHighContrast: (val: boolean | ((prev: boolean) => boolean)) => void;
   fontSize: 'normal' | 'large' | 'xlarge';
@@ -41,6 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAlertModal,
   onOpenAlert,
   onOpenSearch,
+  onOpenCMS,
   isHighContrast,
   setIsHighContrast,
   fontSize,
@@ -205,6 +207,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="font-bold">Komunikaty ({unreadAlertCount})</span>
             </button>
 
+            {/* Redakcja CMS button */}
+            {onOpenCMS && (
+              <button
+                onClick={onOpenCMS}
+                id="btn-navbar-cms"
+                title="Panel Redakcji (Keystatic / Cloudflare D1)"
+                className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  isHighContrast
+                    ? 'border-yellow-400 bg-yellow-400 text-black'
+                    : isDarkMode
+                      ? 'border-blue-600/70 bg-blue-600/20 text-blue-300 hover:bg-blue-600 hover:text-white'
+                      : 'border-blue-600 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white shadow-2xs'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span className="hidden xs:inline sm:inline">Panel Redakcji</span>
+                <span className="xs:hidden sm:hidden">CMS</span>
+              </button>
+            )}
+
             {/* Mobile hamburger menu toggle */}
             <div className="flex lg:hidden items-center gap-1.5 ml-1">
               <button
@@ -296,6 +318,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pb-2">
+            {onOpenCMS && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenCMS();
+                }}
+                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/30 text-left transition-colors cursor-pointer sm:col-span-2"
+              >
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span>Panel Redaktora (Keystatic / D1)</span>
+              </button>
+            )}
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;

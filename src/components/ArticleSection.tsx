@@ -20,7 +20,8 @@ interface ArticleSectionProps {
   articles: Article[];
   onSelectArticle: (article: Article) => void;
   onLikeArticle: (articleId: string) => void;
-  onAddNewArticle: (article: Omit<Article, 'id' | 'views' | 'likes' | 'comments'>) => void;
+  onAddNewArticle?: (article: Omit<Article, 'id' | 'views' | 'likes' | 'comments'>) => void;
+  onOpenCMS?: () => void;
   isHighContrast: boolean;
 }
 
@@ -29,6 +30,7 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({
   onSelectArticle,
   onLikeArticle,
   onAddNewArticle,
+  onOpenCMS,
   isHighContrast,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('wszystkie');
@@ -59,11 +61,12 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({
 
   // Filtering
   const filteredArticles = articles.filter(art => {
+    if (!art) return false;
     const matchesCategory = selectedCategory === 'wszystkie' || art.category === selectedCategory;
     const matchesSearch = 
-      art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      art.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      art.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      (art.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (art.excerpt || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (Array.isArray(art.tags) && art.tags.some(t => (t || '').toLowerCase().includes(searchQuery.toLowerCase())));
     return matchesCategory && matchesSearch;
   });
 
@@ -129,12 +132,12 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({
             </div>
 
             <button
-              onClick={() => setShowAddModal(true)}
+              onClick={() => onOpenCMS ? onOpenCMS() : setShowAddModal(true)}
               id="btn-add-article-modal"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors cursor-pointer shrink-0"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs transition-colors cursor-pointer shrink-0"
             >
-              <PlusCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Napisz / Zgłoś temat</span>
+              <Sparkles className="w-4 h-4 text-slate-950" />
+              <span>Panel Redaktora (CMS)</span>
             </button>
           </div>
         </div>
@@ -207,7 +210,7 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {featuredArticle.tags.slice(0, 3).map((tag, idx) => (
+                    {(featuredArticle.tags || []).slice(0, 3).map((tag, idx) => (
                       <span key={idx} className="text-[11px] px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium">
                         #{tag}
                       </span>
@@ -224,11 +227,11 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({
                       title="Polub artykuł"
                     >
                       <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
-                      <span className="font-semibold text-slate-700 dark:text-slate-300">{featuredArticle.likes}</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">{featuredArticle.likes || 0}</span>
                     </button>
                     <span className="flex items-center gap-1.5 text-slate-500">
                       <MessageSquare className="w-4 h-4 text-slate-400" />
-                      <span className="font-semibold text-slate-700 dark:text-slate-300">{featuredArticle.comments.length}</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">{featuredArticle.comments?.length || 0}</span>
                     </span>
                   </div>
 

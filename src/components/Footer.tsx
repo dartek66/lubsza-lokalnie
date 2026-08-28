@@ -14,15 +14,17 @@ import {
   Code,
   CheckCircle,
   Copy,
-  Layers
+  Layers,
+  Lock
 } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (tab: string) => void;
+  onOpenCMS?: () => void;
   isHighContrast: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, isHighContrast }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenCMS, isHighContrast }) => {
   const [showDeployGuide, setShowDeployGuide] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
@@ -99,15 +101,27 @@ jobs:
               Niezależna inicjatywa obywatelska mieszkańca Lubszy. Informujemy o sprawach lokalnych, patrzymy na ręce władzom gminy, punktujemy wpadki i doceniamy sukcesy. Portal tworzony oddolnie dla mieszkańców 21 sołectw.
             </p>
 
-            <div className="pt-2">
+            <div className="pt-2 flex flex-wrap gap-2">
               <button
                 onClick={() => setShowDeployGuide(true)}
                 id="btn-footer-deploy-guide"
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <Cloud className="w-4 h-4 text-amber-400" />
-                <span>Instrukcja: GitHub & Cloudflare Pages</span>
+                <span>GitHub & Cloudflare Pages</span>
               </button>
+
+              {onOpenCMS && (
+                <button
+                  onClick={onOpenCMS}
+                  id="btn-footer-open-cms"
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-colors cursor-pointer"
+                  title="Dostęp zabezpieczony hasłem redakcyjnym"
+                >
+                  <Lock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Panel Redaktora (CMS)</span>
+                </button>
+              )}
             </div>
           </div>
 
