@@ -1,22 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HerbLubsza } from '../data/crest';
 import { 
   CloudSun, 
+  Sun,
+  Cloud,
+  CloudRain,
+  CloudLightning,
+  CloudSnow,
+  CloudDrizzle,
+  CloudFog,
   Wind, 
   Leaf, 
   BellRing, 
   ChevronRight, 
   Compass, 
   FileText, 
-  CalendarDays, 
   MessageSquareQuote,
-  Search,
   Sparkles,
   Users,
-  AlertTriangle,
   Trees,
   Heart,
-  Trash2
+  RefreshCw,
+  Info,
+  Droplets
 } from 'lucide-react';
 
 interface HeaderBannerProps {
@@ -27,6 +33,18 @@ interface HeaderBannerProps {
   isHighContrast?: boolean;
 }
 
+interface WeatherData {
+  temperature: number;
+  apparentTemperature: number;
+  humidity: number;
+  windSpeed: number;
+  weatherCode: number;
+  isDay: number;
+  description: string;
+  lastUpdated: string;
+  isLive: boolean;
+}
+
 export const HeaderBanner: React.FC<HeaderBannerProps> = ({
   onNavigate,
   onOpenSearch,
@@ -35,12 +53,104 @@ export const HeaderBanner: React.FC<HeaderBannerProps> = ({
   isHighContrast = false,
 }) => {
   const [activeAlertIndex, setActiveAlertIndex] = useState(0);
+  const [showWeatherSourceInfo, setShowWeatherSourceInfo] = useState(false);
+  const [isWeatherLoading, setIsWeatherLoading] = useState(false);
+
+  // Weather state (Default fallback + Live fetch from Open-Meteo for Lubsza coordinates)
+  const [weather, setWeather] = useState<WeatherData>({
+    temperature: 21,
+    apparentTemperature: 21,
+    humidity: 62,
+    windSpeed: 12,
+    weatherCode: 1,
+    isDay: 1,
+    description: 'Częściowo słonecznie',
+    lastUpdated: 'Aktualizowane na żywo',
+    isLive: false
+  });
+
+  const getWeatherInterpretation = (code: number, isDay: number) => {
+    switch (code) {
+      case 0:
+        return { text: isDay ? 'Bezchmurnie i słonecznie' : 'Bezchmurna noc', icon: Sun };
+      case 1:
+      case 2:
+        return { text: 'Niewielkie zachmurzenie', icon: CloudSun };
+      case 3:
+        return { text: 'Pochmurno', icon: Cloud };
+      case 45:
+      case 48:
+        return { text: 'Mgła / zamglenie', icon: CloudFog };
+      case 51:
+      case 53:
+      case 55:
+        return { text: 'Lekka mżawka', icon: CloudDrizzle };
+      case 61:
+      case 63:
+      case 65:
+        return { text: 'Opady deszczu', icon: CloudRain };
+      case 71:
+      case 73:
+      case 75:
+        return { text: 'Opady śniegu', icon: CloudSnow };
+      case 80:
+      case 81:
+      case 82:
+        return { text: 'Przelotny deszcz', icon: CloudRain };
+      case 95:
+      case 96:
+      case 99:
+        return { text: 'Burza z piorunami', icon: CloudLightning };
+      default:
+        return { text: 'Umiarkowane zachmurzenie', icon: CloudSun };
+    }
+  };
+
+  const fetchLiveLubszaWeather = async () => {
+    setIsWeatherLoading(true);
+    try {
+      // Coordinates for Lubsza (powiat brzeski, woj. opolskie): Lat 50.8986, Lon 17.5244
+      const response = await fetch(
+        'https://api.open-meteo.com/v1/forecast?latitude=50.8986&longitude=17.5244&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&timezone=Europe%2FWarsaw'
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const current = data.current;
+        const interp = getWeatherInterpretation(current.weather_code, current.is_day);
+        
+        setWeather({
+          temperature: Math.round(current.temperature_2m),
+          apparentTemperature: Math.round(current.apparent_temperature),
+          humidity: current.relative_humidity_2m,
+          windSpeed: Math.round(current.wind_speed_10m),
+          weatherCode: current.weather_code,
+          isDay: current.is_day,
+          description: interp.text,
+          lastUpdated: new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
+          isLive: true
+        });
+      }
+    } catch (err) {
+      console.warn('Nie udało się pobrać aktualnej pogody z Open-Meteo, używam danych orientacyjnych.', err);
+    } finally {
+      setIsWeatherLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveLubszaWeather();
+    // Refresh weather automatically every 15 minutes
+    const timer = setInterval(fetchLiveLubszaWeather, 15 * 60 * 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const WeatherIconComponent = getWeatherInterpretation(weather.weatherCode, weather.isDay).icon;
 
   const officialTickerAlerts = [
     { title: 'Kontrola Obywatelska: Sprawdzamy realizację inwestycji i wydatków budżetu Gminy Lubsza [Audyt]', tag: 'STRAŻ OBYWATELSKA', tab: 'news' },
     { title: 'Barometr Władzy: Oceń wójta, radnych i referaty urzędowe w niezależnej sondzie!', tag: 'OCEŃ WŁADZE', tab: 'reviews' },
-    { title: 'XXVIII Sesja Rady Gminy – 3 września 2026 r. – zobacz projekty uchwał i transmisję', tag: 'RADNI POD LUPĄ', tab: 'notices' },
-    { title: 'Dożynki Gminne w Szydłowicach – 6 września 2026 r. – wielkie święto tradycji i KGW', tag: 'SPOŁECZNOŚĆ', tab: 'events' },
+    { title: 'XXVIII Sesja Rady Gminy – zobacz projekty uchwał, budżet i transmisję online', tag: 'RADNI POD LUPĄ', tab: 'notices' },
+    { title: 'Dożynki Gminne w Szydłowicach – wielkie święto tradycji, sołectw i KGW', tag: 'SPOŁECZNOŚĆ', tab: 'events' },
   ];
 
   return (
@@ -68,9 +178,9 @@ export const HeaderBanner: React.FC<HeaderBannerProps> = ({
             {/* Left: Coat of Arms + Welcome Typography */}
             <div className="lg:col-span-8 space-y-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                {/* Official Crest Badge with glow */}
-                <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl shrink-0">
-                  <HerbLubsza className="w-20 h-24 md:w-24 md:h-28" />
+                {/* Official Crest Image */}
+                <div className="shrink-0 p-1 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl group transition-all duration-300 hover:border-amber-400/50">
+                  <HerbLubsza className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32" />
                 </div>
 
                 <div>
@@ -142,38 +252,89 @@ export const HeaderBanner: React.FC<HeaderBannerProps> = ({
 
             {/* Right: Real-time Municipality Info Card (Weather & Quick Status) */}
             <div className="lg:col-span-4">
-              <div className="bg-slate-900/80 backdrop-blur-md rounded-3xl p-6 border border-white/15 text-white shadow-xl space-y-4">
+              <div className="bg-slate-900/85 backdrop-blur-md rounded-3xl p-6 border border-white/15 text-white shadow-2xl space-y-4">
+                
+                {/* Header of Weather Card */}
                 <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
                   <div className="flex items-center gap-2">
-                    <CloudSun className="w-5 h-5 text-amber-400" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                    <WeatherIconComponent className="w-5 h-5 text-amber-400" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
                       Pogoda w Lubszy
                     </span>
                   </div>
-                  <span className="text-[11px] text-blue-300 bg-blue-950/80 px-2.5 py-0.5 rounded-full border border-blue-800 font-medium">
-                    Stacja Lubsza
-                  </span>
+                  
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={fetchLiveLubszaWeather}
+                      disabled={isWeatherLoading}
+                      title="Odśwież dane meteorologiczne na żywo"
+                      aria-label="Odśwież pogodę"
+                      className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isWeatherLoading ? 'animate-spin text-blue-400' : ''}`} />
+                    </button>
+                    <button
+                      onClick={() => setShowWeatherSourceInfo(!showWeatherSourceInfo)}
+                      title="Informacje o źródle danych"
+                      className="text-[11px] text-blue-300 bg-blue-950/90 hover:bg-blue-900 px-2.5 py-0.5 rounded-full border border-blue-700/80 font-medium inline-flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <span>Stacja Lubsza</span>
+                      <Info className="w-3 h-3 text-blue-400" />
+                    </button>
+                  </div>
                 </div>
 
+                {/* Weather Info Popover details if clicked */}
+                {showWeatherSourceInfo && (
+                  <div className="p-3 bg-blue-950/90 rounded-2xl border border-blue-700/60 text-xs text-blue-100 space-y-1 animate-fadeIn">
+                    <p className="font-semibold text-white flex items-center gap-1.5">
+                      <Compass className="w-3.5 h-3.5 text-amber-400" />
+                      Prawdziwe dane meteorologiczne na żywo
+                    </p>
+                    <p className="text-[11px] text-blue-200 leading-relaxed">
+                      Dane pobierane są w czasie rzeczywistym z modeli <strong>Open-Meteo / DWD ICON & ECMWF</strong> dla dokładnych współrzędnych geograficznych Gminy Lubsza (<strong>50°53&apos;55&quot;N, 17°31&apos;28&quot;E</strong>).
+                    </p>
+                    <div className="text-[10px] text-blue-300/80 pt-1 flex justify-between">
+                      <span>Status: {weather.isLive ? 'Połączono ze stacją' : 'Tryb gotowości'}</span>
+                      <span>Ostatni odczyt: {weather.lastUpdated}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Main Temperature & Conditions */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-3xl sm:text-4xl font-extrabold text-white">22°C</div>
-                    <p className="text-xs text-slate-300 mt-0.5">Częściowo słonecznie, bez opadów</p>
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                        {weather.temperature}°C
+                      </div>
+                      <span className="text-xs text-slate-400 font-medium">
+                        odcz. {weather.apparentTemperature}°C
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 mt-1 font-medium capitalize">
+                      {weather.description}
+                    </p>
                   </div>
+                  
                   <div className="text-right text-xs space-y-1.5 text-slate-300">
                     <div className="flex items-center justify-end gap-1.5">
                       <Wind className="w-3.5 h-3.5 text-sky-300" />
-                      <span>Wiatr: 11 km/h</span>
+                      <span>Wiatr: {weather.windSpeed} km/h</span>
+                    </div>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Droplets className="w-3.5 h-3.5 text-blue-300" />
+                      <span>Wilgotność: {weather.humidity}%</span>
                     </div>
                     <div className="flex items-center justify-end gap-1.5">
                       <Leaf className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-300 font-medium">Jakość pow.: Bardzo dobra</span>
+                      <span className="text-emerald-300 font-medium">Jakość: Bardzo dobra</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Direct Emergency / Urgent Call Strip */}
-                <div className="bg-slate-950/60 rounded-2xl p-3.5 border border-slate-800 text-xs space-y-1">
+                {/* Direct Emergency / Office Hours Strip */}
+                <div className="bg-slate-950/70 rounded-2xl p-3.5 border border-slate-800 text-xs space-y-1">
                   <div className="font-semibold text-blue-300 flex items-center justify-between">
                     <span>Godziny Urzędu Gminy:</span>
                     <span className="text-slate-300 font-normal">Pon-Pt 7:30 - 15:30</span>

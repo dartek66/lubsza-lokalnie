@@ -81,7 +81,7 @@ jobs:
           {/* Col 1: Brand & Crest & Citizen Initiative Identity (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <HerbLubsza className="w-12 h-14" />
+              <HerbLubsza className="w-14 h-14" />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-serif font-black text-xl text-white tracking-wide">

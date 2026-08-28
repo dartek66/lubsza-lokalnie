@@ -197,8 +197,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="brand-logo-btn"
             className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-xl p-1 shrink-0"
           >
-            <div className="transition-transform duration-300 group-hover:scale-105">
-              <HerbLubsza className="w-11 h-13" />
+            <div className="transition-transform duration-300 group-hover:scale-105 shrink-0">
+              <HerbLubsza className="w-12 h-12 md:w-14 md:h-14" />
             </div>
             <div>
               <div className="flex items-center gap-2">
